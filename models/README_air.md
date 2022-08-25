@@ -1,4 +1,4 @@
-## YOLOAir: Make the improvement of the YOLO model faster, more convenient
+## YOLOv7-Air: Make the improvement of the YOLO model faster, more convenient
 
 简体中文 | [English](./README_EN.md)
 
