@@ -23,19 +23,13 @@ import yaml
 from PIL import Image
 from torch.cuda import amp
 
-from utils.datasets import exif_transpose, letterbox
-from utils.general import (LOGGER, check_requirements, check_suffix, check_version, colorstr, increment_path,
-                           make_divisible, non_max_suppression, scale_coords, xywh2xyxy, xyxy2xywh)
-from utils.plots import Annotator, colors, save_one_box
-from utils.torch_utils import copy_attr, time_sync
-
 # from utils.utils import *
 
 try:
     from mish_cuda import MishCuda as Mish
 except:
     class Mish(nn.Module):  # https://github.com/digantamisra98/Mish
-        def forward(self, x):
+        def forward(self, x):# tc
             return x * torch.nn.functional.softplus(x).tanh()
 
 def autopad(k, p=None):  # kernel, padding
@@ -206,6 +200,14 @@ class SPPCSP(nn.Module):
         y2 = self.cv2(x)
         return self.cv7(self.act(self.bn(torch.cat((y1, y2), dim=1))))
 
+'''
+██╗   ██╗ ██████╗ ██╗      ██████╗      █████╗     ██╗    ██████╗ 
+╚██╗ ██╔╝██╔═══██╗██║     ██╔═══██╗    ██╔══██╗    ██║    ██╔══██╗
+ ╚████╔╝ ██║   ██║██║     ██║   ██║    ███████║    ██║    ██████╔╝
+  ╚██╔╝  ██║   ██║██║     ██║   ██║    ██╔══██║    ██║    ██╔══██╗
+   ██║   ╚██████╔╝███████╗╚██████╔╝    ██║  ██║    ██║    ██║  ██║
+   ╚═╝    ╚═════╝ ╚══════╝ ╚═════╝     ╚═╝  ╚═╝    ╚═╝    ╚═╝  ╚═╝
+'''
 
 class MP(nn.Module):
     # Spatial pyramid pooling layer used in YOLOv3-SPP
@@ -265,13 +267,13 @@ def conv_bn(in_channels, out_channels, kernel_size, stride, padding, groups=1):
                                         bias=False))
     result.add_module('bn', nn.BatchNorm2d(num_features=out_channels))
 
-    return result
+    return result# tc
 
 
 class RepVGGBlockv6(nn.Module):
     '''RepVGGBlock is a basic rep-style block, including training and deploy status
     This code is based on https://github.com/DingXiaoH/RepVGG/blob/main/repvgg.py
-    '''
+    '''# tc
     def __init__(self, in_channels, out_channels, kernel_size=3,
                  stride=1, padding=1, dilation=1, groups=1, padding_mode='zeros', deploy=False, use_se=False):
         super(RepVGGBlockv6, self).__init__()
@@ -391,7 +393,7 @@ class RepVGGBlockv6(nn.Module):
 class RepBlock(nn.Module):
     '''
         RepBlock is a stage block with rep-style basic block
-    '''
+    '''# tc
     def __init__(self, in_channels, out_channels, n=1):
         super().__init__()
         self.conv1 = RepVGGBlockv6(in_channels, out_channels)

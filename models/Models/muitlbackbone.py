@@ -77,7 +77,7 @@ class drop_connect:
         x = (x / keep_prob) * binary_mask
         return x
 
-class stem(nn.Module):
+class stem(nn.Module):# mg
     def __init__(self, c1, c2, act='ReLU6'):
         super().__init__()
         self.conv = nn.Conv2d(c1, c2, kernel_size=3, stride=2, padding=1, bias=False)
@@ -312,7 +312,7 @@ class SpatialAttention(nn.Module):
         x = self.conv1(x)
         return self.sigmoid(x)
 
-class CBAM(nn.Module):
+class CBAM(nn.Module):# mg
     def __init__(self, channelIn, channelOut):
         super(CBAM, self).__init__()
         self.channel_attention = ChannelAttention(channelIn)
@@ -530,7 +530,7 @@ class SPP(nn.Module):
         self.cv2 = Conv(c_ * (len(k) + 1), c2, 1, 1)
         self.m = nn.ModuleList([nn.MaxPool2d(kernel_size=x, stride=1, padding=x // 2) for x in k])
 
-    def forward(self, x):
+    def forward(self, x):# mg
         x = self.cv1(x)
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')  # suppress torch 1.9.0 max_pool2d() warning
@@ -703,7 +703,7 @@ class DropPath(nn.Module):
     """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
     """
 
-    def __init__(self, drop_prob=None):
+    def __init__(self, drop_prob=None):# mg
         super(DropPath, self).__init__()
         self.drop_prob = drop_prob
 
@@ -902,7 +902,7 @@ def get_bn(channels):
     if use_sync_bn:
         return nn.SyncBatchNorm(channels)
     else:
-        return nn.BatchNorm2d(channels)
+        return nn.BatchNorm2d(channels)# mg
 
 def conv_bn(in_channels, out_channels, kernel_size, stride, padding, groups, dilation=1):
     if padding is None:
@@ -1081,7 +1081,7 @@ class RepLKNet_Stem(nn.Module):
                 x = stem_layer(x)
         return x
 
-class RepLKNet_stage1(nn.Module):
+class RepLKNet_stage1(nn.Module):# mg
     def __init__(self, channels, large_kernel_sizes=[31,29,27,13], layers=[2,2,18,2], drop_path_rate=0.3,
                  small_kernel=5, dw_ratio=1, ffn_ratio=4):
         super(RepLKNet_stage1, self).__init__()

@@ -14,7 +14,7 @@ def INF(B,H,W):
 
 class CrissCrossAttention(nn.Module):
     """ Criss-Cross Attention Module"""
-    def __init__(self, in_dim):
+    def __init__(self, in_dim, out_dim):
         super(CrissCrossAttention,self).__init__()
         self.query_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
         self.key_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
@@ -25,6 +25,7 @@ class CrissCrossAttention(nn.Module):
 
 
     def forward(self, x):
+        # https://github.com/iscyy/yoloair
         m_batchsize, _, height, width = x.size()
         proj_query = self.query_conv(x)
         proj_query_H = proj_query.permute(0,3,1,2).contiguous().view(m_batchsize*width,-1,height).permute(0, 2, 1)
@@ -40,10 +41,8 @@ class CrissCrossAttention(nn.Module):
         concate = self.softmax(torch.cat([energy_H, energy_W], 3))
 
         att_H = concate[:,:,:,0:height].permute(0,2,1,3).contiguous().view(m_batchsize*width,height,height)
-        #print(concate)
-        #print(att_H) 
+
         att_W = concate[:,:,:,height:height+width].contiguous().view(m_batchsize*height,width,width)
         out_H = torch.bmm(proj_value_H, att_H.permute(0, 2, 1)).view(m_batchsize,width,-1,height).permute(0,2,3,1)
         out_W = torch.bmm(proj_value_W, att_W.permute(0, 2, 1)).view(m_batchsize,height,-1,width).permute(0,2,1,3)
-        #print(out_H.size(),out_W.size())
         return self.gamma*(out_H + out_W) + x

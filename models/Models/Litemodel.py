@@ -66,7 +66,7 @@ class ContextBlock2d(nn.Module):
         assert pool in ['avg', 'att']
         assert all([f in ['channel_add', 'channel_mul'] for f in fusions])
         assert len(fusions) > 0, 'at least one fusion should be used'
-        self.inplanes = inplanes
+        self.inplanes = inplanes# mg
         self.planes = inplanes // 4
         self.pool = pool
         self.fusions = fusions
@@ -181,7 +181,7 @@ class TransformerLayer(nn.Module):
         return x
 
 
-class TransformerBlock(nn.Module):
+class TransformerBlock(nn.Module):# mg
     # Vision Transformer https://arxiv.org/abs/2010.11929
     def __init__(self, c1, c2, num_heads, num_layers):
         super().__init__()
@@ -299,7 +299,7 @@ class SPPF(nn.Module):
     # Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher
     def __init__(self, c1, c2, k=5):  # equivalent to SPP(k=(5, 9, 13))
         super().__init__()
-        c_ = c1 // 2  # hidden channels
+        c_ = c1 // 2  # hidden channels# mg
         self.cv1 = Conv(c1, c_, 1, 1)
         self.cv2 = Conv(c_ * 4, c2, 1, 1)
         self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
@@ -415,7 +415,7 @@ class conv_bn_relu_maxpool(nn.Module):
         self.conv = nn.Sequential(
             nn.Conv2d(c1, c2, kernel_size=3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(c2),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=True),# mg
         )
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
 
@@ -547,7 +547,7 @@ def drop_connect(x, drop_connect_rate, training):
     return x
 
 
-class MBConvBlock(nn.Module):
+class MBConvBlock(nn.Module):# mg
     def __init__(self, inp, oup, k, s):
         super(MBConvBlock, self).__init__()
 
@@ -694,7 +694,7 @@ class RepVGGBlock(nn.Module):
                                          padding=padding, dilation=dilation, groups=groups, bias=True,
                                          padding_mode=padding_mode)
 
-        else:
+        else:# mg
             self.rbr_identity = nn.BatchNorm2d(
                 num_features=in_channels) if out_channels == in_channels and stride == 1 else None
             self.rbr_dense = conv_bn(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
@@ -763,7 +763,7 @@ class RepVGGBlock(nn.Module):
 
 # build mbv3 block
 # -----------------------------
-class mobilev3_bneck(nn.Module):
+class mobilev3_bneck(nn.Module):# mg
     def __init__(self, inp, oup, hidden_dim, kernel_size, stride, use_se, use_hs):
         super(mobilev3_bneck, self).__init__()
         assert stride in [1, 2]
@@ -875,7 +875,7 @@ class LC_SEModule(nn.Module):
 
 class LC_Block(nn.Module):
     def __init__(self, num_channels, num_filters, stride, dw_size, use_se=False):
-        super().__init__()
+        super().__init__()# mg
         self.use_se = use_se
         self.dw_conv = CBH(
             num_channels=num_channels,
@@ -986,7 +986,7 @@ class ES_Bottleneck(nn.Module):
         if self.stride > 1:
             self.branch1 = nn.Sequential(
                 self.depthwise_conv(inp, inp, kernel_size=3, stride=self.stride, padding=1),
-                nn.BatchNorm2d(inp),
+                nn.BatchNorm2d(inp),# mg
                 nn.Conv2d(inp, branch_features, kernel_size=1, stride=1, padding=0, bias=False),
                 nn.BatchNorm2d(branch_features),
                 nn.Hardswish(inplace=True),

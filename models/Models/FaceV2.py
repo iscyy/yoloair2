@@ -62,7 +62,7 @@ class XBNConv(nn.Module):
 # yolov5-FaceV2:https://arxiv.org/abs/2208.02019
 class TridentBlock(nn.Module):
     def __init__(self, c1, c2, stride=1, c=False, e=0.5, padding=[1, 2, 3], dilate=[1, 2, 3], bias=False):
-        super(TridentBlock, self).__init__()
+        super(TridentBlock, self).__init__()# mg
         self.stride = stride
         self.c = c
         c_ = int(c2 * e)
@@ -75,6 +75,7 @@ class TridentBlock(nn.Module):
         self.bn2 = nn.BatchNorm2d(c2)
 
         self.act = nn.SiLU()
+        # mg
 
         nn.init.kaiming_uniform_(self.share_weightconv1, nonlinearity="relu")
         nn.init.kaiming_uniform_(self.share_weightconv2, nonlinearity="relu")
@@ -101,6 +102,7 @@ class TridentBlock(nn.Module):
 
         return out
 
+        # https://github.com/iscyy/yoloair
     def forward_for_middle(self, x):
         residual = x
         out = nn.functional.conv2d(x, self.share_weightconv1, bias=self.bias)
@@ -211,7 +213,7 @@ class ConvMixer(nn.Module):
         y = torch.exp(y)
         return x * y.expand_as(x)
 
-
+# https://github.com/iscyy/yoloair
 class SEAM(nn.Module):
     def __init__(self, c1, c2, n, reduction=16):
         super(SEAM, self).__init__()
@@ -248,7 +250,7 @@ class SEAM(nn.Module):
         y = torch.exp(y)
         return x * y.expand_as(x)
 
-def DcovN(c1, c2, depth, kernel_size=3, patch_size=3):
+def DcovN(c1, c2, depth, kernel_size=3, patch_size=3):# mg
     dcovn = nn.Sequential(
         nn.Conv2d(c1, c2, kernel_size=patch_size, stride=patch_size),
         nn.GELU(),
@@ -363,7 +365,7 @@ class SPP(nn.Module):
         self.cv2 = Conv(c_ * (len(k) + 1), c2, 1, 1)
         self.m = nn.ModuleList([nn.MaxPool2d(kernel_size=x, stride=1, padding=x // 2) for x in k])
 
-    def forward(self, x):
+    def forward(self, x):# mg
         x = self.cv1(x)
         return self.cv2(torch.cat([x] + [m(x) for m in self.m], 1))
 
@@ -378,7 +380,7 @@ class Focus(nn.Module):
     def forward(self, x):  # x(b,c,w,h) -> y(b,4c,w/2,h/2)
         return self.conv(torch.cat([x[..., ::2, ::2], x[..., 1::2, ::2], x[..., ::2, 1::2], x[..., 1::2, 1::2]], 1))
         # return self.conv(self.contract(x))
-
+# https://github.com/iscyy/yoloair
 class Contract(nn.Module):
     # Contract width-height into channels, i.e. x(1,64,80,80) to x(1,256,40,40)
     def __init__(self, gain=2):
@@ -410,7 +412,7 @@ class Expand(nn.Module):
 class Concat(nn.Module):
     # Concatenate a list of tensors along dimension
     def __init__(self, dimension=1):
-        super(Concat, self).__init__()
+        super(Concat, self).__init__()# mg
         self.d = dimension
 
     def forward(self, x):

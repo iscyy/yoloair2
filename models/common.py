@@ -16,6 +16,7 @@ from utils.datasets import letterbox
 from utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh
 from utils.plots import color_list, plot_one_box
 from utils.torch_utils import time_synchronized
+from models.module import *
 from models.commonv5 import C3
 
 
@@ -127,7 +128,7 @@ class RobustConv(nn.Module):
             x = x.mul(self.gamma.reshape(1, -1, 1, 1)) 
         return x
 
-
+# https://github.com/iscyy/yoloair
 class RobustConv2(nn.Module):
     # Robust convolution 2 (use [32, 5, 2] or [32, 7, 4] or [32, 11, 8] for one of the paths in CSP).
     def __init__(self, c1, c2, k=7, s=4, p=None, g=1, act=True, layer_scale_init_value=1e-6):  # ch_in, ch_out, kernel, stride, padding, groups
@@ -180,7 +181,7 @@ class Stem(nn.Module):
 
 
 class DownC(nn.Module):
-    # Spatial pyramid pooling layer used in YOLOv3-SPP
+    # Spatial pyramid pooling layer used in YOLOv3-SPP # tc
     def __init__(self, c1, c2, n=1, k=2):
         super(DownC, self).__init__()
         c_ = int(c1)  # hidden channels
@@ -410,7 +411,7 @@ class GhostCSPA(BottleneckCSPA):
         c_ = int(c2 * e)  # hidden channels
         self.m = nn.Sequential(*[Ghost(c_, c_) for _ in range(n)])
 
-
+# https://github.com/iscyy/yoloair
 class GhostCSPB(BottleneckCSPB):
     # CSP https://github.com/WongKinYiu/CrossStagePartialNetworks
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):  # ch_in, ch_out, number, shortcut, groups, expansion
@@ -661,7 +662,7 @@ class RepBottleneckCSPA(BottleneckCSPA):
 
 
 class RepBottleneckCSPB(BottleneckCSPB):
-    # CSP Bottleneck https://github.com/WongKinYiu/CrossStagePartialNetworks
+    # CSP Bottleneck https://github.com/WongKinYiu/CrossStagePartialNetworks# tc
     def __init__(self, c1, c2, n=1, shortcut=False, g=1, e=0.5):  # ch_in, ch_out, number, shortcut, groups, expansion
         super().__init__(c1, c2, n, shortcut, g, e)
         c_ = int(c2)  # hidden channels
@@ -768,7 +769,7 @@ class TransformerBlock(nn.Module):
         self.conv = None
         if c1 != c2:
             self.conv = Conv(c1, c2)
-        self.linear = nn.Linear(c2, c2)  # learnable position embedding
+        self.linear = nn.Linear(c2, c2)  # learnable position embedding# tc
         self.tr = nn.Sequential(*[TransformerLayer(c2, num_heads) for _ in range(num_layers)])
         self.c2 = c2
 
@@ -884,7 +885,7 @@ class autoShape(nn.Module):
         #   URI:             = 'https://github.com/ultralytics/yolov5/releases/download/v1.0/zidane.jpg'
         #   OpenCV:          = cv2.imread('image.jpg')[:,:,::-1]  # HWC BGR to RGB x(640,1280,3)
         #   PIL:             = Image.open('image.jpg')  # HWC x(640,1280,3)
-        #   numpy:           = np.zeros((640,1280,3))  # HWC
+        #   numpy:           = np.zeros((640,1280,3))  # HWC# tc
         #   torch:           = torch.zeros(16,3,320,640)  # BCHW (scaled to size=640, 0-1 values)
         #   multiple:        = [Image.open('image1.jpg'), Image.open('image2.jpg'), ...]  # list of images
 
@@ -1080,7 +1081,7 @@ class OREPA_3x3_RepConv(nn.Module):
         self.deploy = deploy
 
         if nonlinear is None:
-            self.nonlinear = nn.Identity()
+            self.nonlinear = nn.Identity()# tc
         else:
             self.nonlinear = nonlinear
 
@@ -1435,7 +1436,7 @@ class WindowAttention(nn.Module):
         x = self.proj_drop(x)
         return x
 
-class Mlp(nn.Module):
+class Mlp(nn.Module):# tc
 
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.SiLU, drop=0.):
         super().__init__()

@@ -57,7 +57,7 @@ class MobileOneBlock(nn.Module):
             self.deploy_bn = nn.BatchNorm2d(in_channels)
             self.pw_reparam = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=1, stride=1, bias=True)
 
-        else:
+        else:# mg
             self.dw_bn_layer = nn.BatchNorm2d(in_channels) if out_channels == in_channels and stride == 1 else None
             for k_idx in range(k):
                 setattr(self, f'dw_3x3_{k_idx}', 
@@ -100,7 +100,7 @@ class MobileOneBlock(nn.Module):
             id_out = 0
         else:
             id_out = self.pw_bn_layer(x)
-        x_conv_1x1 = []
+        x_conv_1x1 = []# mg
         for k_idx in range(self.k):
             x_conv_1x1.append(getattr(self, f'pw_1x1_{k_idx}')(x))
         x = id_out + sum(x_conv_1x1)

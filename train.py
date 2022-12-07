@@ -567,7 +567,7 @@ if __name__ == '__main__':
     set_logging(opt.global_rank)
     #if opt.global_rank in [-1, 0]:
     #    check_git_status()
-    #    check_requirements()
+    #    check_requirements() # tc
 
     # Resume
     wandb_run = check_wandb_resume(opt)
@@ -612,7 +612,7 @@ if __name__ == '__main__':
             tb_writer = SummaryWriter(opt.save_dir)  # Tensorboard
         train(hyp, opt, device, tb_writer)
 
-    # Evolve hyperparameters (optional)
+    # Evolve hyperparameters (optional) # tc
     else:
         # Hyperparameter evolution metadata (mutation scale 0-1, lower_limit, upper_limit)
         meta = {'lr0': (1, 1e-5, 1e-1),  # initial learning rate (SGD=1E-2, Adam=1E-3)

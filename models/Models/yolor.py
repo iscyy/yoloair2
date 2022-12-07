@@ -14,7 +14,7 @@ try:
             super(DWT, self).__init__()
             self.xfm = DWTForward(J=1, wave='db1', mode='zero')
 
-        def forward(self, x):
+        def forward(self, x):# mg
             b,c,w,h = x.shape
             yl, yh = self.xfm(x)
             return torch.cat([yl/2., yh[0].view(b,-1,w//2,h//2)/2.+.5], 1)
@@ -333,7 +333,7 @@ class BottleneckCSPGC(nn.Module):
         self.cv3 = nn.Conv2d(c_, c_, 1, 1, bias=False)
         self.cv4 = Conv(2 * c_, c2, 1, 1)
         self.bn = nn.BatchNorm2d(2 * c_)  # applied to cat(cv2, cv3)
-        self.act = nn.SiLU()
+        self.act = nn.SiLU()# mg
         self.m = nn.Sequential(*[Bottleneck(c_, c_, shortcut, g, e=1.0) for _ in range(n)])
                      
         self.channel_add_conv = nn.Sequential(
@@ -541,7 +541,7 @@ class SPPCSP(nn.Module):
         return self.cv7(self.act(self.bn(torch.cat((y1, y2), dim=1))))
 
 
-class Focus(nn.Module):
+class Focus(nn.Module):# tc
     # Focus wh information into c-space
     def __init__(self, c1, c2, k=1, s=1, p=None, g=1, act=True):  # ch_in, ch_out, kernel, stride, padding, groups
         super(Focus, self).__init__()
@@ -708,7 +708,7 @@ class GC(nn.Module):
         context_mask = context_mask.unsqueeze(-1)
         # [N, 1, C, 1]
         context = torch.matmul(input_x, context_mask)
-        # [N, C, 1, 1]
+        # [N, C, 1, 1]# tc
         context = context.view(batch, channel, 1, 1)
 
         return context
@@ -868,7 +868,7 @@ class SPPCSPTR(nn.Module):
         y2 = self.cv2(x)
         return self.cv7(self.act(self.bn(torch.cat((y1, y2), dim=1))))
     
-class TR(BottleneckCSPTR):
+class TR(BottleneckCSPTR):# tc
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
         super().__init__(c1, c2, n, shortcut, g, e)
         c_ = int(c2 * e)

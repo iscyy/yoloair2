@@ -47,7 +47,7 @@ class SplitAttention(nn.Module):
 
 class S2Attention(nn.Module):
 
-    def __init__(self, channels=512 ):
+    def __init__(self, channels, out_channels):
         super().__init__()
         self.mlp1 = nn.Linear(channels,channels*3)
         self.mlp2 = nn.Linear(channels,channels)
