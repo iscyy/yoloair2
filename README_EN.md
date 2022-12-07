@@ -147,7 +147,7 @@ ______________________________________________________________________
 ______________________________________________________________________
 
 
-### YOLOv7训练教程✨
+### YOLOv7 Training Tutorial✨
 Basically consistent with the YOLOv5 framework, you can refer to[YOLOAir](https://github.com/iscyy/yoloair)
 
 - [Train Custom Data](https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data) 🚀 Recommended
