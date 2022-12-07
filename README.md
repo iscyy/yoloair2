@@ -1,6 +1,6 @@
-## YOLOAir2 : Makes improvements easy again
+## YOLOAir2☁️💡🎈 : Makes improvements easy again
 
-基于 YOLOAir🔥🔥🔥 算法库 : 👉[https://github.com/iscyy/yoloair](https://github.com/iscyy/yoloair)
+基于 YOLOAir 算法库 ![](https://img.shields.io/github/stars/iscyy/yoloair?style=social)  : 👉[🔗 https://github.com/iscyy/yoloair](https://github.com/iscyy/yoloair)
 
 <div align="center">
   <p>
