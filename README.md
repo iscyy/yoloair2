@@ -1,7 +1,7 @@
 ## 🌟 全新的YOLOv7改进版本来袭，最新改进点更新🚀2024
 
 
-### YOLOAir2☁️💡🎈 : Makes improvements easy again(改进YOLOv7)
+### YOLOAir2☁️💡🎈 : Makes improvements easy again(专注于改进 YOLOv7 、YOLOv-Tiny 模型)
 
 手把手改进YOLO系列: 全面改进篇更新🔗：
 [点击查看详情🚀 - 更多更全更新颖·《原创》·《最新》· 手把手改进YOLO系列详细教程(包括改进原理以及改进源代码 · 改进有效涨点)📚](https://github.com/iscyy/yoloair/wiki/Improved-tutorial-presentation)
