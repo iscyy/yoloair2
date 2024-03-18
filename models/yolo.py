@@ -14,6 +14,8 @@ from utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, s
     select_device, copy_attr
 from utils.loss import SigmoidBin
 
+from models.CoreV7.EMO import C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB
+
 try:
     import thop  # for FLOPS computation
 except ImportError:
@@ -785,6 +787,16 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
                      ST2CSPA, ST2CSPB, ST2CSPC, C3]:
                 args.insert(2, n)  # number of repeats
                 n = 1
+        # 新增模块
+        elif m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB]:
+            c1, c2 = ch[f], args[0]
+            if c2 != no:  # if not output
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2, *args[1:]]
+            if m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB]:
+                args.insert(2, n)  # number of repeats
+                n = 1
+        # 新增模块
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
         elif m in [CA, S2Attention, SimSPPF, CBAM, CrissCrossAttention, SOCA, ShuffleAttention, NAMAttention, GAMAttention, SEAttention, SimAM]:
