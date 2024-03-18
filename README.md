@@ -1,3 +1,6 @@
+### 🌟 全新的YOLOv7改进版本来袭，最新改进点更新🚀2024
+
+
 ## YOLOAir2☁️💡🎈 : Makes improvements easy again
 
 基于 YOLOAir 算法库 ![](https://img.shields.io/github/stars/iscyy/yoloair?style=social)  : 👉[🔗 https://github.com/iscyy/yoloair](https://github.com/iscyy/yoloair)
