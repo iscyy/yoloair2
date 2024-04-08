@@ -16,6 +16,7 @@ from utils.loss import SigmoidBin
 
 from models.CoreV7.EMO import C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB
 from models.CoreV7.Dysample import DySample
+from .gelan import RepNCSPELAN4, SPPELAN
 
 try:
     import thop  # for FLOPS computation
@@ -807,6 +808,13 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
             if m in [C3GhostV2]:
                 args.insert(2, n)  # number of repeats
                 n = 1
+        elif m is RepNCSPELAN4: # 
+            c1, c2, c3, c4 = ch[f], args[0], args[1], args[2]
+            if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
+                c2 = make_divisible(c2 * gw, 8)
+                c3 = make_divisible(c3 * gw, 8)
+                c4 = make_divisible(c4 * gw, 8)
+            args = [c1, c2, c3, c4, *args[3:]]
         # 新增模块
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
