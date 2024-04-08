@@ -14,6 +14,10 @@ from utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, s
     select_device, copy_attr
 from utils.loss import SigmoidBin
 
+from models.CoreV7.EMO import C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB
+from models.CoreV7.Dysample import DySample
+from .gelan import RepNCSPELAN4, SPPELAN
+
 try:
     import thop  # for FLOPS computation
 except ImportError:
@@ -785,6 +789,33 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
                      ST2CSPA, ST2CSPB, ST2CSPC, C3]:
                 args.insert(2, n)  # number of repeats
                 n = 1
+        # 新增模块
+        elif m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB]:
+            c1, c2 = ch[f], args[0]
+            if c2 != no:  # if not output
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2, *args[1:]]
+            if m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB]:
+                args.insert(2, n)  # number of repeats
+                n = 1
+        elif m in [DySample]:
+            args = [ch[f], *args[0:]]
+        elif m in [C3GhostV2]:
+            c1, c2 = ch[f], args[0]
+            if c2 != no:  # if not outputss
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2, *args[1:]]
+            if m in [C3GhostV2]:
+                args.insert(2, n)  # number of repeats
+                n = 1
+        elif m is RepNCSPELAN4: # 
+            c1, c2, c3, c4 = ch[f], args[0], args[1], args[2]
+            if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
+                c2 = make_divisible(c2 * gw, 8)
+                c3 = make_divisible(c3 * gw, 8)
+                c4 = make_divisible(c4 * gw, 8)
+            args = [c1, c2, c3, c4, *args[3:]]
+        # 新增模块
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
         elif m in [CA, S2Attention, SimSPPF, CBAM, CrissCrossAttention, SOCA, ShuffleAttention, NAMAttention, GAMAttention, SEAttention, SimAM]:
