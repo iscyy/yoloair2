@@ -15,6 +15,7 @@ from utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, s
 from utils.loss import SigmoidBin
 
 from models.CoreV7.EMO import C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB
+from models.CoreV7.Dysample import DySample
 
 try:
     import thop  # for FLOPS computation
@@ -794,6 +795,16 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
                 c2 = make_divisible(c2 * gw, 8)
             args = [c1, c2, *args[1:]]
             if m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB]:
+                args.insert(2, n)  # number of repeats
+                n = 1
+        elif m in [DySample]:
+            args = [ch[f], *args[0:]]
+        elif m in [C3GhostV2]:
+            c1, c2 = ch[f], args[0]
+            if c2 != no:  # if not outputss
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2, *args[1:]]
+            if m in [C3GhostV2]:
                 args.insert(2, n)  # number of repeats
                 n = 1
         # 新增模块
