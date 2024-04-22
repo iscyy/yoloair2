@@ -14,7 +14,7 @@ from utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, s
     select_device, copy_attr
 from utils.loss import SigmoidBin
 
-# from models.CoreV7.EMO import C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB
+from models.CoreV7.EMO import C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB
 from models.CoreV7.Dysample import DySample
 from .gelan import RepNCSPELAN4, SPPELAN
 
@@ -526,7 +526,7 @@ class Model(nn.Module):
         else:  # is *.yaml
             import yaml  # for torch hub
             self.yaml_file = Path(cfg).name
-            with open(cfg) as f:
+            with open(cfg, encoding='utf-8') as f:
                 self.yaml = yaml.load(f, Loader=yaml.SafeLoader)  # model dict
 
         # Define model
@@ -807,6 +807,22 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
                 c3 = make_divisible(c3 * gw, 8)
                 c4 = make_divisible(c4 * gw, 8)
             args = [c1, c2, c3, c4, *args[3:]]
+        elif m is CfSPConv:
+            c1, c2 = ch[f], args[0]
+            if c2 != no:  # if not outputss
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2, *args[1:]]
+            if m is CfSPConv:
+                args.insert(2, n)  # number of repeats
+                n = 1
+        elif m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB]:
+            c1, c2 = ch[f], args[0]
+            if c2 != nc:  # if not output
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2, *args[1:]]
+            if m in [C3_RMB, CSRMBC, C2f_RMB, CPNRMB, ReNLANRMB]:
+                args.insert(2, n)  # number of repeats
+                n = 1
         # 新增模块
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
